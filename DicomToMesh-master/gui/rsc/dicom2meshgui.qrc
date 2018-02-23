@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>folder.png</file>
+        <file>play-button.png</file>
+        <file>save.png</file>
+    </qresource>
+    <qresource prefix="/img">
+        <file>aot.jpg</file>
+    </qresource>
+</RCC>

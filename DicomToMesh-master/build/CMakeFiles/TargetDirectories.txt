@@ -1,0 +1,6 @@
+/Users/aether/Downloads/DicomToMesh-master/build/CMakeFiles/rebuild_cache.dir
+/Users/aether/Downloads/DicomToMesh-master/build/CMakeFiles/edit_cache.dir
+/Users/aether/Downloads/DicomToMesh-master/build/CMakeFiles/dicom2mesh.dir
+/Users/aether/Downloads/DicomToMesh-master/build/lib/CMakeFiles/rebuild_cache.dir
+/Users/aether/Downloads/DicomToMesh-master/build/lib/CMakeFiles/edit_cache.dir
+/Users/aether/Downloads/DicomToMesh-master/build/lib/CMakeFiles/dicom2meshlib.dir

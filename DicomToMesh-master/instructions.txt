@@ -1,0 +1,20 @@
+
+download vtk-8.1.0
+cmake in the cmake folder
+make in the cmake folder
+do configs listed on github for the dicom folder
+for mac its not usr/local its /Users/aether
+make in build folder
+in build folder use dicom2mesh -i pathToDicomDirectory -t 557 -o mesh.stl
+the path needs to be in fucking quotes
+
+
+Download VTK-8.1.0
+cmake in cmake folder
+Make -j 4 inc make folder
+Go to dicommesh folder
+Mkdir build
+Ccmake .. in build
+Put path of vtk make folder after its done making
+in build run dicom2mesh -i “pathToDicomDirectory” -t 557 -o mesh.stl
+Give stl to Sanjay to show

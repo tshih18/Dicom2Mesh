@@ -9,7 +9,7 @@ import numpy
 import mcubes
 from pymesh import stl, obj
 
-# python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing
+# python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing -o testing
 
 if __name__ == '__main__':
 	# construct the argument parse and parse the arguments

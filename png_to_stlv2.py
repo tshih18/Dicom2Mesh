@@ -16,6 +16,8 @@ if __name__ == '__main__':
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-p", "--path", required=True,
 		help="path to the input images")
+	ap.add_argument("-o", "--output", required=True,
+		help="output file name excluding file extension")
 	args = vars(ap.parse_args())
 
 	all_imgs = []
@@ -47,11 +49,10 @@ if __name__ == '__main__':
 	print "Done with marching cubes algorithm"
 
 	# Export the result
-	mcubes.export_obj(vertices, triangles, "clavicle-33.obj")
+	mcubes.export_obj(vertices, triangles, args["output"] + ".obj")
 	print "File saved as obj"
 
-
 	# Convert to stl
-	m = obj.Obj("clavicle-33.obj")
-	m.save_stl("clavicle.stl")
+	m = obj.Obj(args["output"] + ".obj")
+	m.save_stl(args["output"] + ".stl")
 	print "Converted to stl"

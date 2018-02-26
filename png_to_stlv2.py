@@ -8,6 +8,7 @@ import os
 import numpy
 import mcubes
 from pymesh import stl, obj
+from PIL import Image
 
 
 # python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing
@@ -27,7 +28,8 @@ if __name__ == '__main__':
 		for filename in fileList:
 			print(filename)
 			if ".png" in filename.lower():  # check whether the file's png
-				img = plt.imread(os.path.join(dirName,filename))
+				img = misc.imread(os.path.join(dirName,filename))
+				print(img.shape)
 				all_imgs.append(img)
 
 	all_imgs = np.dstack(all_imgs)

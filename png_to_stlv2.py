@@ -26,7 +26,7 @@ if __name__ == '__main__':
 		for filename in fileList:
 			print(filename)
 			if ".png" in filename.lower():  # check whether the file's png
-				img = misc.imread(os.path.join(dirName,filename))
+				img = misc.imread(os.path.join(dirName,filename), flatten=True)
 				print(img.shape)
 				all_imgs.append(img)
 

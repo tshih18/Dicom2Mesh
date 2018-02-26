@@ -8,8 +8,6 @@ import os
 import numpy
 import mcubes
 from pymesh import stl, obj
-from PIL import Image
-
 
 # python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing
 

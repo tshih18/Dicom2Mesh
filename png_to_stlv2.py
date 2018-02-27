@@ -56,3 +56,14 @@ if __name__ == '__main__':
 	m = obj.Obj(args["output"] + ".obj")
 	m.save_stl(args["output"] + ".stl")
 	print "Converted to stl"
+
+
+
+	# mesh = pymesh.load_mesh(args["output"] + ".obj")
+	# mesh, info = pymesh.split_long_edges(mesh, rel_threshold=0.3, preserve_feature=True)
+	# mesh, info = pymesh.collapse_short_edges(mesh, rel_threshold=0.1, preserve_feature=True)
+	# mesh, info = pymesh.remove_duplicated_faces(mesh)
+	# mesh, info = pymesh.remove_isolated_vertices(mesh)
+	# mesh, info = pymesh.remove_duplicated_vertices(mesh, tol=.1)
+
+	# pymesh.save_mesh("filename.obj", mesh)

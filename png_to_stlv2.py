@@ -20,7 +20,7 @@ from skimage.draw import ellipsoid
 # python2 png_to_stlv2.py -p /Users/aether/Downloads/male_female_dcm_vishuman/male_dcm/Pelvis/pelvis_png -o pelvis
 
 if __name__ == '__main__':
-
+	'''
 	# construct the argument parse and parse the arguments
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-p", "--path", required=True,
@@ -72,7 +72,7 @@ if __name__ == '__main__':
 	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0)
 	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
 
-	'''
+
 	# Export the result
 	mcubes.export_obj(verts, faces, "victor.obj")
 	print "File saved as obj"
@@ -163,16 +163,38 @@ if __name__ == '__main__':
 	# Returns an all triangle mesh
 	mesh = mesh.TriFilter()
 
-	curvature = mesh.Curvature(curvature='mean')
-	print curvature.shape
+	connectivity = vtk.vtkPolyDataConnectivityFilter()
+	connectivity.SetInputData(mesh)
+	connectivity.SetExtractionModeToAllRegions()
+	connectivity.Update()
 
+	# remove objects consisting of less than ratio vertexes of the biggest object
+	regionSizes = connectivity.GetRegionSizes()
 
+	maxSize = 0
+	regions = 0
+	# find object with most vertices
+	while regions < connectivity.GetNumberOfExtractedRegions():
+		if regionSizes.GetValue(regions) > maxSize:
+			maxSize = regionSizes.GetValue(regions)
+		regions += 1
+	# append regions of sizes over the threshold
+	connectivity.SetExtractionModeToSpecifiedRegions()
+	regions1 = 0
+	ratio = 0.1
+	while regions1 < connectivity.GetNumberOfExtractedRegions():
+		if regionSizes.GetValue(regions1) > (maxSize * ratio):
+			connectivity.AddSpecifiedRegion(regions1)
+		regions1 += 1
+
+	connectivity.Update()
+	mesh.DeepCopy(connectivity.GetOutput())
 	# remove non-manifold geometries
-	non_manifold_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=True,
+	# non_manifold_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=True,
 	# 								feature_edges=False, manifold_edges=False)
 	# good_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=False,
 	# 								feature_edges=True, manifold_edges=True)
-	non_manifold_edges.Plot(color='orange')
+	# non_manifold_edges.Plot(color='orange')
 	#
 	# non_manifold_npy = non_manifold_edges.GetNumpyFaces()
 
@@ -189,7 +211,7 @@ if __name__ == '__main__':
 	# sfilter.Update()
 	# mesh = vtkInterface.PolyData(sfilter.GetOutput())
 
-	#mesh.Plot(color='orange')
+	mesh.Plot(color='orange')
 
 ################################################################
 
@@ -201,4 +223,3 @@ if __name__ == '__main__':
 	# mesh, info = pymesh.remove_duplicated_vertices(mesh, tol=.1)
 
 	# pymesh.save_mesh("filename.obj", mesh)
-	

@@ -1,4 +1,3 @@
-clavicle*.obj
-clavicle*.stl
-scapula*.obj
+/3D_Models
 .DS_Store
+all_img.npy

@@ -20,6 +20,7 @@ from skimage.draw import ellipsoid
 # python2 png_to_stlv2.py -p /Users/aether/Downloads/male_female_dcm_vishuman/male_dcm/Pelvis/pelvis_png -o pelvis
 
 if __name__ == '__main__':
+
 	# construct the argument parse and parse the arguments
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-p", "--path", required=True,
@@ -68,9 +69,10 @@ if __name__ == '__main__':
 
 ################################################################
 
-	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0) 
+	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0)
 	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
 
+	'''
 	# Export the result
 	mcubes.export_obj(verts, faces, "victor.obj")
 	print "File saved as obj"
@@ -78,10 +80,11 @@ if __name__ == '__main__':
 	m = obj.Obj("victor.obj")
 	m.save_stl("victor.stl")
 	print "Converted to stl"
+	'''
 
 
 ################################################################
-	
+
 	# import numpy as np
 	# import dicom
 	# import os
@@ -99,17 +102,17 @@ if __name__ == '__main__':
 	# from plotly.graph_objs import *
 
 	# def plotly_3d(verts, faces):
-	# 	x,y,z = zip(*verts) 
-		
+	# 	x,y,z = zip(*verts)
+
 	# 	print "Drawing"
-		
-	# 	# Make the colormap single color since the axes are positional not intensity. 
+
+	# 	# Make the colormap single color since the axes are positional not intensity.
 	# #    colormap=['rgb(255,105,180)','rgb(255,255,51)','rgb(0,191,255)']
 	# 	colormap=['rgb(236, 236, 212)','rgb(236, 236, 212)']
-		
+
 	# 	fig = FF.create_trisurf(x=x,
-	# 						y=y, 
-	# 						z=z, 
+	# 						y=y,
+	# 						z=z,
 	# 						plot_edges=False,
 	# 						colormap=colormap,
 	# 						simplices=faces,
@@ -119,7 +122,7 @@ if __name__ == '__main__':
 
 	# def plt_3d(verts, faces):
 	# 	print "Drawing"
-	# 	x,y,z = zip(*verts) 
+	# 	x,y,z = zip(*verts)
 	# 	fig = plt.figure(figsize=(10, 10))
 	# 	ax = fig.add_subplot(111, projection='3d')
 
@@ -142,16 +145,51 @@ if __name__ == '__main__':
 ################################################################
 
 	import vtkInterface
+	import vtk
 	# pip2 install vtk
 	# pip2 install vtkInterface
 	# Filetype must be either "ply", "stl", "g3d" or "vtk"
 	# http://vtkinterface.readthedocs.io/en/latest/polydata.html#mesh-manipulation-and-plotting
 	# mesh = vtkInterface.PolyData(args["output"] + ".stl")
-	mesh = vtkInterface.PolyData("victor.stl")
+
+	# mesh = vtkInterface.PolyData()
+	# mesh = mesh.MakeFromArrays(vertices=verts, faces=faces)
+
+	mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
+
+	# Cleans mesh by merging duplicate points, removed unused points, and/or remove degernate cells
 	mesh.Clean()
+
+	# Returns an all triangle mesh
 	mesh = mesh.TriFilter()
-	# mesh = mesh.Subdivide(1, subfilter="loop")
-	mesh.Plot(color='orange')
+
+	curvature = mesh.Curvature(curvature='mean')
+	print curvature.shape
+
+
+	# remove non-manifold geometries
+	non_manifold_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=True,
+	# 								feature_edges=False, manifold_edges=False)
+	# good_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=False,
+	# 								feature_edges=True, manifold_edges=True)
+	non_manifold_edges.Plot(color='orange')
+    #
+	# non_manifold_npy = non_manifold_edges.GetNumpyFaces()
+
+	#mesh = mesh.RemovePoints(remove_mask=non_manifold_npy, mode='all', keepscalars=True)
+	#mesh = mesh.BooleanUnion(non_manifold_edges)
+
+
+	# Subdivide() into smaller triangles
+	# Cannot subdivide on non-manifold geometry
+	#mesh = mesh.Subdivide(1, subfilter='butterfly')
+	# sfilter = vtk.vtkLoopSubdivisionFilter()
+	# sfilter.SetNumberOfSubdivisions(1)
+	# sfilter.SetInputData(mesh)
+	# sfilter.Update()
+	# mesh = vtkInterface.PolyData(sfilter.GetOutput())
+
+	#mesh.Plot(color='orange')
 
 ################################################################
 

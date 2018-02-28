@@ -8,13 +8,10 @@ import os
 import numpy
 import mcubes
 from pymesh import stl, obj
-from skimage import measure
+import vtkInterface
+import vtk
 
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
-from skimage import measure
-from skimage.draw import ellipsoid
 
 # python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing -o testing
 # python2 png_to_stlv2.py -p /Users/aether/Downloads/male_female_dcm_vishuman/male_dcm/Pelvis/pelvis_png -o pelvis
@@ -51,101 +48,14 @@ if __name__ == '__main__':
 
 	print(ArrayDicom.shape)
 
-	# # Extract #-isosurface
-	# vertices, triangles = mcubes.marching_cubes(ArrayDicom, 0)
-	# #print type(vertices) #nparray
-	# #print type(triangles) #nparray
-	# print "Done with marching cubes algorithm"
-
-	# # Export the result
-	# mcubes.export_obj(vertices, triangles, args["output"] + ".obj")
-	# print "File saved as obj"
-
-	# # Convert to stl
-	# m = obj.Obj(args["output"] + ".obj")
-	# m.save_stl(args["output"] + ".stl")
-	# print "Converted to stl"
-
 
 ################################################################
 
 	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0)
 	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
-
-
-	# Export the result
-	mcubes.export_obj(verts, faces, "victor.obj")
-	print "File saved as obj"
-	# Convert to stl
-	m = obj.Obj("victor.obj")
-	m.save_stl("victor.stl")
-	print "Converted to stl"
 	'''
 
 
-################################################################
-
-	# import numpy as np
-	# import dicom
-	# import os
-	# import matplotlib.pyplot as plt
-	# from glob import glob
-	# from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-	# import scipy.ndimage
-	# from skimage import morphology
-	# from skimage import measure
-	# from skimage.transform import resize
-	# from sklearn.cluster import KMeans
-	# from plotly import __version__
-	# from plotly.offline import download_plotlyjs, init_notebook_mode, plot, iplot
-	# from plotly.tools import FigureFactory as FF
-	# from plotly.graph_objs import *
-
-	# def plotly_3d(verts, faces):
-	# 	x,y,z = zip(*verts)
-
-	# 	print "Drawing"
-
-	# 	# Make the colormap single color since the axes are positional not intensity.
-	# #    colormap=['rgb(255,105,180)','rgb(255,255,51)','rgb(0,191,255)']
-	# 	colormap=['rgb(236, 236, 212)','rgb(236, 236, 212)']
-
-	# 	fig = FF.create_trisurf(x=x,
-	# 						y=y,
-	# 						z=z,
-	# 						plot_edges=False,
-	# 						colormap=colormap,
-	# 						simplices=faces,
-	# 						backgroundcolor='rgb(64, 64, 64)',
-	# 						title="Interactive Visualization")
-	# 	iplot(fig)
-
-	# def plt_3d(verts, faces):
-	# 	print "Drawing"
-	# 	x,y,z = zip(*verts)
-	# 	fig = plt.figure(figsize=(10, 10))
-	# 	ax = fig.add_subplot(111, projection='3d')
-
-	# 	# Fancy indexing: `verts[faces]` to generate a collection of triangles
-	# 	mesh = Poly3DCollection(verts[faces], linewidths=0.05, alpha=1)
-	# 	face_color = [1, 1, 0.9]
-	# 	mesh.set_facecolor(face_color)
-	# 	ax.add_collection3d(mesh)
-
-	# 	ax.set_xlim(0, max(x))
-	# 	ax.set_ylim(0, max(y))
-	# 	ax.set_zlim(0, max(z))
-	# 	ax.set_axis_bgcolor((0.7, 0.7, 0.7))
-	# 	plt.show()
-
-
-	# # plt_3d(verts, faces)
-
-
-################################################################
-
-	import vtkInterface
-	import vtk
 	# pip2 install vtk
 	# pip2 install vtkInterface
 	# Filetype must be either "ply", "stl", "g3d" or "vtk"
@@ -156,6 +66,7 @@ if __name__ == '__main__':
 	# mesh = mesh.MakeFromArrays(vertices=verts, faces=faces)
 
 	mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
+
 	# Cleans mesh by merging duplicate points, removed unused points, and/or remove degernate cells
 	mesh.Clean()
 	# Returns an all triangle mesh

@@ -68,7 +68,8 @@ if __name__ == '__main__':
 
 ################################################################
 
-	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0) 
+	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0) 
+	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
 
 	import numpy as np
 	import dicom
@@ -135,7 +136,7 @@ if __name__ == '__main__':
 	# # Filetype must be either "ply", "stl", "g3d" or "vtk"
 	# # http://vtkinterface.readthedocs.io/en/latest/polydata.html#mesh-manipulation-and-plotting
 	# # mesh = vtkInterface.PolyData(args["output"] + ".stl")
-	# mesh = vtkInterface.PolyData("pelvis.stl")
+	# mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
 	# mesh.Clean()
 	# mesh = mesh.TriFilter()
 	# # mesh = mesh.Subdivide(1, subfilter="loop")

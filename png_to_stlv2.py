@@ -173,7 +173,7 @@ if __name__ == '__main__':
 	# good_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=False,
 	# 								feature_edges=True, manifold_edges=True)
 	non_manifold_edges.Plot(color='orange')
-    #
+	#
 	# non_manifold_npy = non_manifold_edges.GetNumpyFaces()
 
 	#mesh = mesh.RemovePoints(remove_mask=non_manifold_npy, mode='all', keepscalars=True)
@@ -201,3 +201,4 @@ if __name__ == '__main__':
 	# mesh, info = pymesh.remove_duplicated_vertices(mesh, tol=.1)
 
 	# pymesh.save_mesh("filename.obj", mesh)
+	

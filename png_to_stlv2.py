@@ -2,11 +2,8 @@ import numpy as np
 import os
 import argparse
 import scipy.misc as misc
-import matplotlib.pyplot as plt
 from scipy.ndimage import imread
-import os
-import numpy
-import mcubes
+from skimage import measure
 from pymesh import stl, obj
 import vtkInterface
 import vtk
@@ -17,7 +14,7 @@ import vtk
 # python2 png_to_stlv2.py -p /Users/aether/Downloads/male_female_dcm_vishuman/male_dcm/Pelvis/pelvis_png -o pelvis
 
 if __name__ == '__main__':
-	'''
+
 	# construct the argument parse and parse the arguments
 	ap = argparse.ArgumentParser()
 	ap.add_argument("-p", "--path", required=True,
@@ -35,25 +32,12 @@ if __name__ == '__main__':
 			print(filename)
 			if ".png" in filename.lower():  # check whether the file's png
 				img = misc.imread(os.path.join(dirName,filename), flatten=True)
-				print(img.shape)
 				all_imgs.append(img)
 
-	all_imgs = np.dstack(all_imgs)
-
-	print(all_imgs.shape)
-
-	np.save("all_img.npy", all_imgs)
-
-	ArrayDicom = np.load("all_img.npy")
-
-	print(ArrayDicom.shape)
-
-
-################################################################
-
+	ArrayPNG = np.dstack(all_imgs)
 	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0)
-	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
-	'''
+	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayPNG, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
+
 
 
 	# pip2 install vtk
@@ -62,10 +46,10 @@ if __name__ == '__main__':
 	# http://vtkinterface.readthedocs.io/en/latest/polydata.html#mesh-manipulation-and-plotting
 	# mesh = vtkInterface.PolyData(args["output"] + ".stl")
 
-	# mesh = vtkInterface.PolyData()
-	# mesh = mesh.MakeFromArrays(vertices=verts, faces=faces)
+	mesh = vtkInterface.PolyData()
+	mesh = mesh.MakeFromArrays(vertices=verts, faces=faces)
 
-	mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
+	#mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
 
 	# Cleans mesh by merging duplicate points, removed unused points, and/or remove degernate cells
 	mesh.Clean()
@@ -73,7 +57,7 @@ if __name__ == '__main__':
 	mesh = mesh.TriFilter()
 
 
-	# -------------------- Remove small islands of certain threshold of biggest region -------------------------------------
+	# ---------- Remove small islands of biggest region ----------
 	connectivity = vtk.vtkPolyDataConnectivityFilter()
 	connectivity.SetInputData(mesh)
 	connectivity.SetExtractionModeToAllRegions()
@@ -100,7 +84,8 @@ if __name__ == '__main__':
 
 	connectivity.Update()
 	mesh.DeepCopy(connectivity.GetOutput())
-	# ----------------------------------------------------------------------------------------------
+
+	# ---------- Smooth regions ----------
 	nbrOfSmoothingIterations = 20
 	smoother = vtk.vtkSmoothPolyDataFilter()
 	smoother.SetInputData(mesh)
@@ -110,4 +95,12 @@ if __name__ == '__main__':
 	smoother.Update()
 	mesh.DeepCopy(smoother.GetOutput())
 
-	mesh.Plot(color='orange')
+
+	#mesh.Plot(color='orange')
+
+	# ---------- Save to stl ----------
+	writer = vtk.vtkSTLWriter()
+	writer.SetFileName(args["output"] + ".stl")
+	writer.SetInputData(mesh)
+	writer.SetFileTypeToASCII()
+	writer.Write()

@@ -156,13 +156,13 @@ if __name__ == '__main__':
 	# mesh = mesh.MakeFromArrays(vertices=verts, faces=faces)
 
 	mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
-
 	# Cleans mesh by merging duplicate points, removed unused points, and/or remove degernate cells
 	mesh.Clean()
-
 	# Returns an all triangle mesh
 	mesh = mesh.TriFilter()
 
+
+	# -------------------- Remove small islands of certain threshold of biggest region -------------------------------------
 	connectivity = vtk.vtkPolyDataConnectivityFilter()
 	connectivity.SetInputData(mesh)
 	connectivity.SetExtractionModeToAllRegions()
@@ -189,37 +189,14 @@ if __name__ == '__main__':
 
 	connectivity.Update()
 	mesh.DeepCopy(connectivity.GetOutput())
-	# remove non-manifold geometries
-	# non_manifold_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=True,
-	# 								feature_edges=False, manifold_edges=False)
-	# good_edges = mesh.ExtractEdges(boundary_edges=False, non_manifold_edges=False,
-	# 								feature_edges=True, manifold_edges=True)
-	# non_manifold_edges.Plot(color='orange')
-	#
-	# non_manifold_npy = non_manifold_edges.GetNumpyFaces()
-
-	#mesh = mesh.RemovePoints(remove_mask=non_manifold_npy, mode='all', keepscalars=True)
-	#mesh = mesh.BooleanUnion(non_manifold_edges)
-
-
-	# Subdivide() into smaller triangles
-	# Cannot subdivide on non-manifold geometry
-	#mesh = mesh.Subdivide(1, subfilter='butterfly')
-	# sfilter = vtk.vtkLoopSubdivisionFilter()
-	# sfilter.SetNumberOfSubdivisions(1)
-	# sfilter.SetInputData(mesh)
-	# sfilter.Update()
-	# mesh = vtkInterface.PolyData(sfilter.GetOutput())
+	# ----------------------------------------------------------------------------------------------
+	nbrOfSmoothingIterations = 20
+	smoother = vtk.vtkSmoothPolyDataFilter()
+	smoother.SetInputData(mesh)
+	smoother.SetNumberOfIterations(nbrOfSmoothingIterations)
+	smoother.SetFeatureAngle(45)
+	smoother.SetRelaxationFactor(0.05)
+	smoother.Update()
+	mesh.DeepCopy(smoother.GetOutput())
 
 	mesh.Plot(color='orange')
-
-################################################################
-
-	# mesh = pymesh.load_mesh(args["output"] + ".obj")
-	# mesh, info = pymesh.split_long_edges(mesh, rel_threshold=0.3, preserve_feature=True)
-	# mesh, info = pymesh.collapse_short_edges(mesh, rel_threshold=0.1, preserve_feature=True)
-	# mesh, info = pymesh.remove_duplicated_faces(mesh)
-	# mesh, info = pymesh.remove_isolated_vertices(mesh)
-	# mesh, info = pymesh.remove_duplicated_vertices(mesh, tol=.1)
-
-	# pymesh.save_mesh("filename.obj", mesh)

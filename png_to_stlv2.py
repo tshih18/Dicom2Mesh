@@ -7,7 +7,23 @@ from skimage import measure
 from pymesh import stl, obj
 import vtkInterface
 import vtk
+import re
+import mcubes
 
+
+def tryint(c):
+	try:
+		return int(c)
+	except:
+		return c
+
+# turn a string into a list of string and number chunks
+def alphanum_key(s):
+	return [tryint(c) for c in re.split('([0-9]+)', s)]
+
+# sort the given list
+def natural_sort(list):
+	list.sort(key=alphanum_key)
 
 
 # python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing -o testing
@@ -24,10 +40,12 @@ if __name__ == '__main__':
 	args = vars(ap.parse_args())
 
 	all_imgs = []
+	output_filename = args["output"] + ".stl"
 
 	print(args["path"])
 
 	for dirName, subdirList, fileList in os.walk(args["path"]):
+		natural_sort(fileList)
 		for filename in fileList:
 			print(filename)
 			if ".png" in filename.lower():  # check whether the file's png
@@ -37,26 +55,26 @@ if __name__ == '__main__':
 	ArrayPNG = np.dstack(all_imgs)
 	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0)
 	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayPNG, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
+	print "Done with marching cubes"
 
+	mcubes.export_obj(verts,faces,args["output"]+".obj")
+	print "File saved as obj"
 
+	m = obj.Obj(args["output"]+".obj")
+	m.save_stl(output_filename)
+	print "Converted to stl"
 
-	# pip2 install vtk
-	# pip2 install vtkInterface
-	# Filetype must be either "ply", "stl", "g3d" or "vtk"
-	# http://vtkinterface.readthedocs.io/en/latest/polydata.html#mesh-manipulation-and-plotting
-	# mesh = vtkInterface.PolyData(args["output"] + ".stl")
-
-	mesh = vtkInterface.PolyData()
-	mesh = mesh.MakeFromArrays(vertices=verts, faces=faces)
-
-	#mesh = vtkInterface.PolyData("pelvis_thresh_full.stl")
+	#mesh.MakeFromArrays(vertices=verts, faces=faces)
+	#mesh.Plot(color='orange')
+	mesh = vtkInterface.PolyData(output_filename)
 
 	# Cleans mesh by merging duplicate points, removed unused points, and/or remove degernate cells
 	mesh.Clean()
+	print "hi"
 	# Returns an all triangle mesh
 	mesh = mesh.TriFilter()
-
-
+	print "Done with cleaning and triangle meshing"
+	mesh.Plot(color='orange')
 	# ---------- Remove small islands of biggest region ----------
 	connectivity = vtk.vtkPolyDataConnectivityFilter()
 	connectivity.SetInputData(mesh)
@@ -84,6 +102,7 @@ if __name__ == '__main__':
 
 	connectivity.Update()
 	mesh.DeepCopy(connectivity.GetOutput())
+	print "Done removing islands"
 
 	# ---------- Smooth regions ----------
 	nbrOfSmoothingIterations = 20
@@ -94,13 +113,14 @@ if __name__ == '__main__':
 	smoother.SetRelaxationFactor(0.05)
 	smoother.Update()
 	mesh.DeepCopy(smoother.GetOutput())
-
+	print "Done Smoothing"
 
 	#mesh.Plot(color='orange')
 
 	# ---------- Save to stl ----------
 	writer = vtk.vtkSTLWriter()
-	writer.SetFileName(args["output"] + ".stl")
+	writer.SetFileName(output_filename)
 	writer.SetInputData(mesh)
 	writer.SetFileTypeToASCII()
 	writer.Write()
+	print "Saved file as stl"

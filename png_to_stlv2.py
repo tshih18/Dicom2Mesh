@@ -9,6 +9,7 @@ import vtkInterface
 import vtk
 import re
 import mcubes
+from stl import mesh
 
 
 def tryint(c):
@@ -58,14 +59,23 @@ if __name__ == '__main__':
 	# print type(verts), verts.shape # (V,3)
 	# print type(faces), faces.shape # (F,3)
 
-	# ---------- Save as obj and convert to stl ----------
-	mcubes.export_obj(verts,faces,args["output"]+".obj")
-	print "File saved as obj"
-
+	# ---------- Convert to stl ----------
 	output_filename = args["output"] + ".stl"
-	m = obj.Obj(args["output"]+".obj")
-	m.save_stl(output_filename)
+	solid = mesh.Mesh(np.zeros(faces.shape[0], dtype=mesh.Mesh.dtype))
+	for i,f in enumerate(faces):
+		for j in range(3):
+			solid.vectors[i][j] = verts[f[j],:]
+	solid.save(output_filename)
 	print "Converted to stl"
+
+	# ---------- Save as obj and convert to stl ----------
+	# mcubes.export_obj(verts,faces,args["output"]+".obj")
+	# print "File saved as obj"
+    #
+    #
+	# m = obj.Obj(args["output"]+".obj")
+	# m.save_stl(output_filename)
+	# print "Converted to stl"
 
 	mesh = vtkInterface.PolyData(output_filename)
 

@@ -52,10 +52,30 @@ if __name__ == '__main__':
 				img = misc.imread(os.path.join(dirName,filename), flatten=True)
 				all_imgs.append(img)
 
+
 	ArrayPNG = np.dstack(all_imgs)
 	# verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayDicom, 0.0)
 	verts, faces, normals, values = measure.marching_cubes_lewiner(ArrayPNG, 0.0, allow_degenerate=False) # takes away triangles with 0 area, slows down algo
+	print type(verts), verts.shape
+	print type(faces), faces.shape
+	'''
+	# convert array to vtkImageData
+	PngImageData = vtk.vtkImageData()
+	vtkArray = vtk.util.numpy_support.numpy_to_vtk(ArrayPNG.ravel(), deep=True, array_type=vtk.VTK_UNSIGNED_CHAR)
+
+	PngImageData.SetDimensions(ArrayPNG.shape)
+	PngImageData.SetSpacing([1,1,1])
+	PngImageData.SetOrigin([0,0,0])
+	PngImageData.GetPointData().SetScalars(vtkArray)
+
+	marchingCubes = vtk.vtkMarchingCubes()
+	marchingCubes.ComputeNormalsOn()
+	marchingCubes.SetValue(0, isovalue)
+	'''
+
+
 	print "Done with marching cubes"
+
 
 	mcubes.export_obj(verts,faces,args["output"]+".obj")
 	print "File saved as obj"
@@ -64,9 +84,34 @@ if __name__ == '__main__':
 	m.save_stl(output_filename)
 	print "Converted to stl"
 
+
 	#mesh.MakeFromArrays(vertices=verts, faces=faces)
 	#mesh.Plot(color='orange')
 	mesh = vtkInterface.PolyData(output_filename)
+
+	'''
+	mesh = vtk.vtkPolyData()
+
+	points = vtk.vtkPoints()
+	polys = vtk.vtkCellArray()
+
+	for i in xrange(0,verts.shape[0]+1):
+		points.InsertPoint(i, verts[i])
+
+	for i in xrange(0,polys.shape[0]+1):
+		polys.InsertNextCell(4)
+
+
+	mesh.SetVerts(vtk_verts)
+	mesh.SetLines(faces)
+	'''
+	fill = vtk.vtkFillHolesFilter()
+	fill.SetInputData(mesh)
+	fill.SetHoleSize(100)
+	fill.Update()
+	mesh.DeepCopy(fill.GetOutput())
+	#mesh.Plot(color='white')
+
 
 	# Cleans mesh by merging duplicate points, removed unused points, and/or remove degernate cells
 	mesh.Clean()
@@ -74,7 +119,7 @@ if __name__ == '__main__':
 	# Returns an all triangle mesh
 	mesh = mesh.TriFilter()
 	print "Done with cleaning and triangle meshing"
-	mesh.Plot(color='orange')
+	#mesh.Plot(color='orange')
 	# ---------- Remove small islands of biggest region ----------
 	connectivity = vtk.vtkPolyDataConnectivityFilter()
 	connectivity.SetInputData(mesh)
@@ -115,7 +160,17 @@ if __name__ == '__main__':
 	mesh.DeepCopy(smoother.GetOutput())
 	print "Done Smoothing"
 
-	#mesh.Plot(color='orange')
+	mesh.Plot(color='orange')
+
+
+
+
+
+	# map = vtk.vtkPolyDataMapper()
+	# map.SetInputConnection(fill.GetOutputPort())
+	# map.Update()
+
+
 
 	# ---------- Save to stl ----------
 	writer = vtk.vtkSTLWriter()

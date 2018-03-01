@@ -68,6 +68,7 @@ if __name__ == '__main__':
 	solid.save(output_filename)
 	print "Converted to stl"
 
+
 	# ---------- Save as obj and convert to stl ----------
 	# mcubes.export_obj(verts,faces,args["output"]+".obj")
 	# print "File saved as obj"
@@ -78,6 +79,7 @@ if __name__ == '__main__':
 	# print "Converted to stl"
 
 	mesh = vtkInterface.PolyData(output_filename)
+	#mesh.Plot(color='white')
 
 	# ---------- Fill holes ----------
 	fill = vtk.vtkFillHolesFilter()
@@ -96,34 +98,72 @@ if __name__ == '__main__':
 	print "Done with cleaning and triangle meshing"
 	#mesh.Plot(color='orange')
 
-
-	# ---------- Remove small islands of biggest region ----------
+	# ---------- Remove small islands compared to number vertices of biggest region ----------
 	connectivity = vtk.vtkPolyDataConnectivityFilter()
 	connectivity.SetInputData(mesh)
 	connectivity.SetExtractionModeToAllRegions()
 	connectivity.Update()
 
-	# remove objects consisting of less than ratio vertexes of the biggest object
+	nregions = connectivity.GetNumberOfExtractedRegions()
 	regionSizes = connectivity.GetRegionSizes()
 	maxSize = 0
 	regions = 0
 	# find object with most vertices
-	while regions < connectivity.GetNumberOfExtractedRegions():
+	while regions < nregions:
 		if regionSizes.GetValue(regions) > maxSize:
 			maxSize = regionSizes.GetValue(regions)
 		regions += 1
+
 	# append regions of sizes over the threshold
 	connectivity.SetExtractionModeToSpecifiedRegions()
+
 	regions1 = 0
-	ratio = 0.1
-	while regions1 < connectivity.GetNumberOfExtractedRegions():
+	ratio = 0.02 # pelvis -.02
+	reduced_regions = []
+	while regions1 < nregions:
 		if regionSizes.GetValue(regions1) > (maxSize * ratio):
 			connectivity.AddSpecifiedRegion(regions1)
+			reduced_regions.append(regions1)
 		regions1 += 1
 
 	connectivity.Update()
+
+
+	# ---------- Remove small islands compared to volume of biggest region ----------
+	regions_and_volume = []
+	max_volume = 0
+	count = 1
+
+	for region in reduced_regions:
+		connectivity.InitializeSpecifiedRegionList()
+		connectivity.AddSpecifiedRegion(region)
+		connectivity.Update()
+
+		# Turns region into polydata
+		p = vtk.vtkPolyData()
+		p.DeepCopy(connectivity.GetOutput())
+
+		# Get volume of region
+		measured_p = vtk.vtkMassProperties()
+		measured_p.SetInputData(p)
+		measured_p_vol = measured_p.GetVolume()
+
+		print(str(count) + " out of " + str(len(reduced_regions)) + " vol: " + str(measured_p_vol))
+		count += 1
+
+		if measured_p_vol > max_volume:
+			max_volume = measured_p_vol
+
+		regions_and_volume.append((region, measured_p_vol))
+
+	connectivity.InitializeSpecifiedRegionList()
+	ratio = .1
+	for region,volume in regions_and_volume:
+		if volume > (ratio * max_volume):
+			 connectivity.AddSpecifiedRegion(region)
+
+	connectivity.Update()
 	mesh.DeepCopy(connectivity.GetOutput())
-	print "Done removing islands"
 
 	# ---------- Smooth regions ----------
 	nbrOfSmoothingIterations = 40

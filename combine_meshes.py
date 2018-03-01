@@ -53,20 +53,20 @@ if __name__ == '__main__':
 	# ap.add_argument("-o", "--output", required=True,
 	# 	help="output file name excluding file extension")
 	# args = vars(ap.parse_args())
-    #
+	#
 	all_imgs = []
-    #
+	#
 	# print(args["path"])
 
-    paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/"]
-    for path in paths:
-        for dirName, subdirList, fileList in os.walk(path):
-    		natural_sort(fileList)
-    		for filename in fileList:
-    			print(filename)
-    			if ".png" in filename.lower():  # check whether the file's png
-    				img = misc.imread(os.path.join(dirName,filename), flatten=True)
-    				all_imgs.append(img)
+	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/"]
+	for path in paths:
+		for dirName, subdirList, fileList in os.walk(path):
+			natural_sort(fileList)
+			for filename in fileList:
+				print(filename)
+				if ".png" in filename.lower():  # check whether the file's png
+					img = misc.imread(os.path.join(dirName,filename), flatten=True)
+					all_imgs.append(img)
 
 	ArrayPNG = np.dstack(all_imgs)
 
@@ -88,8 +88,8 @@ if __name__ == '__main__':
 	# ---------- Save as obj and convert to stl ----------
 	# mcubes.export_obj(verts,faces,args["output"]+".obj")
 	# print "File saved as obj"
-    #
-    #
+	#
+	#
 	# m = obj.Obj(args["output"]+".obj")
 	# m.save_stl(output_filename)
 	# print "Converted to stl"

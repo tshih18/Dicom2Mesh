@@ -118,7 +118,7 @@ if __name__ == '__main__':
 	connectivity.SetExtractionModeToSpecifiedRegions()
 
 	regions1 = 0
-	ratio = 0.02 # pelvis -.02
+	ratio = 0.01 # pelvis -.02
 	reduced_regions = []
 	while regions1 < nregions:
 		if regionSizes.GetValue(regions1) > (maxSize * ratio):
@@ -157,7 +157,7 @@ if __name__ == '__main__':
 		regions_and_volume.append((region, measured_p_vol))
 
 	connectivity.InitializeSpecifiedRegionList()
-	ratio = .1
+	ratio = .05
 	for region,volume in regions_and_volume:
 		if volume > (ratio * max_volume):
 			 connectivity.AddSpecifiedRegion(region)

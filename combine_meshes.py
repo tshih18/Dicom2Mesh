@@ -1,3 +1,17 @@
+
+'''
+shoulder_mesh = vtkInterface.PolyData("f_shoulder_full_smooth.stl")
+head_mesh = vtkInterface.PolyData("head_full_smooth.stl")
+
+vtkappend = vtk.vtkAppendPolyData()
+vtkappend.AddInputData(shoulder_mesh)
+vtkappend.AddInputData(head_mesh)
+vtkappend.Update()
+head_shoulder = vtkInterface.PolyData(vtkappend.GetOutput())
+
+head_shoulder.Plot(color='orange')
+'''
+
 import numpy as np
 import os
 import argparse
@@ -32,25 +46,27 @@ def natural_sort(list):
 
 if __name__ == '__main__':
 
-	# construct the argument parse and parse the arguments
-	ap = argparse.ArgumentParser()
-	ap.add_argument("-p", "--path", required=True,
-		help="path to the input images")
-	ap.add_argument("-o", "--output", required=True,
-		help="output file name excluding file extension")
-	args = vars(ap.parse_args())
-
+	# # construct the argument parse and parse the arguments
+	# ap = argparse.ArgumentParser()
+	# ap.add_argument("-p", "--path", required=True,
+	# 	help="path to the input images")
+	# ap.add_argument("-o", "--output", required=True,
+	# 	help="output file name excluding file extension")
+	# args = vars(ap.parse_args())
+    #
 	all_imgs = []
+    #
+	# print(args["path"])
 
-	print(args["path"])
-
-	for dirName, subdirList, fileList in os.walk(args["path"]):
-		natural_sort(fileList)
-		for filename in fileList:
-			print(filename)
-			if ".png" in filename.lower():  # check whether the file's png
-				img = misc.imread(os.path.join(dirName,filename), flatten=True)
-				all_imgs.append(img)
+    paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/"]
+    for path in paths:
+        for dirName, subdirList, fileList in os.walk(path):
+    		natural_sort(fileList)
+    		for filename in fileList:
+    			print(filename)
+    			if ".png" in filename.lower():  # check whether the file's png
+    				img = misc.imread(os.path.join(dirName,filename), flatten=True)
+    				all_imgs.append(img)
 
 	ArrayPNG = np.dstack(all_imgs)
 

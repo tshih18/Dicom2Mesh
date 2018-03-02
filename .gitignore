@@ -3,3 +3,4 @@
 all_img.npy
 *.stl
 *.obj
+/all_ct*

@@ -1,6 +1,7 @@
 import vtkInterface
 import vtk
 
-mesh = vtkInterface.PolyData("f_hip_full_smooth.stl")
+mesh = vtkInterface.PolyData("3D_Models_good/f_knee.stl")
 
 mesh.Plot(color='orange', linethick=1e-7)
+# mesh.Plot(color='orange', linethick=1e-7)

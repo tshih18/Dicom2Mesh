@@ -31,11 +31,21 @@ if __name__ == '__main__':
 
 	all_imgs = []
 
-	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/" ]
-	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", "/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
-	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/BONE_CT/test/female_pelvis (perfect, begin at 51)", "/home/aether/Desktop/Medical Image Segmentation/bones-unet/BONE_CT/test/female_shoulder","/home/aether/Desktop/Medical Image Segmentation/bones-unet/BONE_CT/test/female_head" ]
+	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/",
+	#		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/shoulder_thresh_predictions/",
+	#		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/" ]
+	# paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", 
+	# 		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/",
+	# 		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
 	# female + hips
-	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_hip_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", "/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
+	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_hip_thresh_predictions/",
+			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", 
+			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/",
+			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
+
+	foldername = "f_ct_HeadToHip_thresh_pngs"
+	if not os.path.exists(foldername):
+		os.makedirs(foldername)
 
 	count = 0
 	for path in paths:
@@ -45,6 +55,6 @@ if __name__ == '__main__':
 				print(filename)
 				if ".png" in filename.lower():  # check whether the file's png
 					img = misc.imread(os.path.join(dirName,filename))
-					misc.imsave("all_ct_thresh_pngs/img" + str(count) + ".png", img )
+					misc.imsave(foldername + "/img" + str(count) + ".png", img )
 					count += 1
 					

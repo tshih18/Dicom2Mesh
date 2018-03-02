@@ -1,6 +1,6 @@
 /3D_Models*
 .DS_Store
-all_img.npy
 *.stl
 *.obj
 /all_ct*
+/f_ct*

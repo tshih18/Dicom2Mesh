@@ -135,7 +135,8 @@ if __name__ == '__main__':
 	count = 1
 
 	for region in reduced_regions:
-		#if region == 139: continue # for head
+		#if region == 52: continue 
+		# f_head: 52
 		# f_shoulder keep all regions
 		connectivity.InitializeSpecifiedRegionList()
 		connectivity.AddSpecifiedRegion(region)

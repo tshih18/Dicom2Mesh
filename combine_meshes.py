@@ -46,19 +46,23 @@ def natural_sort(list):
 
 if __name__ == '__main__':
 
-	# # construct the argument parse and parse the arguments
-	# ap = argparse.ArgumentParser()
+	# construct the argument parse and parse the arguments
+	ap = argparse.ArgumentParser()
 	# ap.add_argument("-p", "--path", required=True,
 	# 	help="path to the input images")
-	# ap.add_argument("-o", "--output", required=True,
-	# 	help="output file name excluding file extension")
-	# args = vars(ap.parse_args())
+	ap.add_argument("-o", "--output", required=True,
+		help="output file name excluding file extension")
+	args = vars(ap.parse_args())
 	#
 	all_imgs = []
 	#
 	# print(args["path"])
 
-	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/"]
+	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/" ]
+	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", "/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
+	# female + hips
+	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_hip_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", "/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/","/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
+
 	for path in paths:
 		for dirName, subdirList, fileList in os.walk(path):
 			natural_sort(fileList)
@@ -134,7 +138,7 @@ if __name__ == '__main__':
 	connectivity.SetExtractionModeToSpecifiedRegions()
 
 	regions1 = 0
-	ratio = 0.01 # pelvis -.02
+	ratio = 0.005 # pelvis -.02
 	reduced_regions = []
 	while regions1 < nregions:
 		if regionSizes.GetValue(regions1) > (maxSize * ratio):
@@ -151,7 +155,10 @@ if __name__ == '__main__':
 	count = 1
 
 	for region in reduced_regions:
-		#if region == 139: continue # for head
+		if region == 551: continue 
+		#511 827 535 0 4 25
+		# for male remove 3350
+		# for female remove 551-9494.33333333
 		# f_shoulder keep all regions
 		connectivity.InitializeSpecifiedRegionList()
 		connectivity.AddSpecifiedRegion(region)
@@ -175,7 +182,7 @@ if __name__ == '__main__':
 		regions_and_volume.append((region, measured_p_vol))
 
 	connectivity.InitializeSpecifiedRegionList()
-	ratio = .05
+	ratio = .025
 	for region,volume in regions_and_volume:
 		if volume > (ratio * max_volume):
 			 connectivity.AddSpecifiedRegion(region)

@@ -26,9 +26,14 @@ def alphanum_key(s):
 def natural_sort(list):
 	list.sort(key=alphanum_key)
 
+'''
+These ratios are used for smaller segments. if you have a fullbody type then use combine_meshes.py
+'''
+
 
 # python2 png_to_stlv2.py -p /Users/aether/Documents/Dicom2Mesh/testing -o testing
 # python2 png_to_stlv2.py -p /Users/aether/Downloads/male_female_dcm_vishuman/male_dcm/Pelvis/pelvis_png -o pelvis
+# python png_to_stlv2.py -p all_ct_thresh_pngs/ -o f2_fullbody
 
 if __name__ == '__main__':
 
@@ -96,7 +101,7 @@ if __name__ == '__main__':
 	# Returns an all triangle mesh
 	mesh = mesh.TriFilter()
 	print "Done with cleaning and triangle meshing"
-	#mesh.Plot(color='orange')
+	mesh.Plot(color='orange')
 
 	# ---------- Remove small islands compared to number vertices of biggest region ----------
 	connectivity = vtk.vtkPolyDataConnectivityFilter()

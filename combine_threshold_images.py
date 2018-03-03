@@ -38,12 +38,14 @@ if __name__ == '__main__':
 	# 		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/",
 	# 		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
 	# female + hips
-	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_hip_thresh_predictions/",
+	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_ankle_thresh_predictions/",
+			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_knee_thresh_predictions/",
+			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_hip_thresh_predictions/",
 			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", 
 			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/",
-			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
+			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/"]
 
-	foldername = "f_ct_HeadToHip_thresh_pngs"
+	foldername = "f_ct_FullBody_thresh_pngs"
 	if not os.path.exists(foldername):
 		os.makedirs(foldername)
 

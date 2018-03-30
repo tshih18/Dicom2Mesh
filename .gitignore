@@ -1,6 +1,7 @@
-/3D_Models*
+/3D_Models_good
 .DS_Store
 *.stl
 *.obj
-/all_ct*
+/all_ct_pngs
 /f_ct*
+/DicomToMesh*

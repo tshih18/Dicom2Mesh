@@ -140,7 +140,9 @@ if __name__ == '__main__':
 	count = 1
 
 	for region in reduced_regions:
-		#if region == 52: continue 
+		if region == 0:
+			continue # for lungs
+		# VESSEL02 lungs: 0 
 		# f_head: 52
 		# f_shoulder keep all regions
 		connectivity.InitializeSpecifiedRegionList()

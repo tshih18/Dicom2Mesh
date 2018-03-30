@@ -31,13 +31,7 @@ if __name__ == '__main__':
 
 	all_imgs = []
 
-	#paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/pelvis_thresh_predictions/",
-	#		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/shoulder_thresh_predictions/",
-	#		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/head_thresh_predictions/" ]
-	# paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_pelvis_thresh_predictions/", 
-	# 		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_shoulder_thresh_predictions/",
-	# 		"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_head_thresh_predictions/" ]
-	# female + hips
+	# Female fullbody threshold images path
 	paths = ["/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_ankle_thresh_predictions/",
 			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_knee_thresh_predictions/",
 			"/home/aether/Desktop/Medical Image Segmentation/bones-unet/f_hip_thresh_predictions/",
